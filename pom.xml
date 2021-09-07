@@ -107,6 +107,7 @@
             </activation>
             <properties>
                 <spring.profiles.active>localhost</spring.profiles.active>
+                <log4j2.config>log4j2-local.xml</log4j2.config>
             </properties>
         </profile>
         <profile>
@@ -125,6 +126,7 @@
             <id>prod</id>
             <properties>
                 <spring.profiles.active>prod</spring.profiles.active>
+                <log4j2.config>log4j2-prod.xml</log4j2.config>
             </properties>
         </profile>
     </profiles>
