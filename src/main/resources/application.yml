@@ -1,0 +1,18 @@
+server:
+  port : 8080
+
+spring:
+  profiles:
+    active: localhost
+
+logging:
+  level:
+    root: INFO
+    fr:
+      abes: DEBUG
+    reactor:
+      netty: debug
+  config: classpath:@log4j2.config@
+
+solr:
+  base-url: http://solrtotal.v102.abes.fr:8081

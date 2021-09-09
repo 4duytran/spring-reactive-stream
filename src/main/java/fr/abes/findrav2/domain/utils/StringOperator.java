@@ -66,6 +66,7 @@ public class StringOperator {
                     .ifPresent(x -> initMap.put(8, x.substring(0, 1)));
         }
 
+        // Print le HashMap avec le nom et le prénom dans le console
         initMap.forEach( (k,v) -> System.out.printf("Key = %s : Value = %s%n", k,v));
         return initMap;
     }
