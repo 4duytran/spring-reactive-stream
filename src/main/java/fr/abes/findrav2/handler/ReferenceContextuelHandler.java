@@ -2,7 +2,7 @@ package fr.abes.findrav2.handler;
 
 import com.google.common.base.Strings;
 import fr.abes.findrav2.domain.dto.ReferenceAutoriteGetDto;
-import fr.abes.findrav2.domain.service.ReferenceAutoriteService;
+import fr.abes.findrav2.domain.service.ReferenceContextuelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -15,15 +15,15 @@ import reactor.core.publisher.Mono;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class ReferenceAutoriteHandler {
+public class ReferenceContextuelHandler {
 
-    private final ReferenceAutoriteService referenceAutoriteService;
+    private final ReferenceContextuelService referenceContextuelService;
 
     @NonNull
-    public Mono<ServerResponse> getAllFromRequestSolr(ServerRequest serverRequest) {
+    public Mono<ServerResponse> getAll(ServerRequest serverRequest) {
 
         String filePropertie = serverRequest.queryParam("file").isPresent() ? serverRequest.queryParam("file")
-                                            .get() : "default-req";
+                                            .get() : "default-req-rc";
 
         log.info("Load propertie file => {}", filePropertie);
 
@@ -39,7 +39,7 @@ public class ReferenceAutoriteHandler {
                 ? ServerResponse.badRequest().build()
                 : ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(referenceAutoriteService.findAllRA(filePropertie,firstName,lastName), ReferenceAutoriteGetDto.class)
+                .body(referenceContextuelService.findAllRC(filePropertie,firstName,lastName), ReferenceAutoriteGetDto.class)
                 .switchIfEmpty(ServerResponse.notFound().build())
                 .onErrorResume(e -> ServerResponse.badRequest().build() );
 

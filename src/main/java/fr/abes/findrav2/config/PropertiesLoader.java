@@ -25,7 +25,7 @@ public class PropertiesLoader {
                 e.printStackTrace();
             }
         } else {
-            log.warn("Not found the file propertie => loading default file");
+            log.warn("Not found the file propertie with the name '{}' => loading default file : '{}'", fileName, "default-req");
             InputStream in1 = this.getClass().getClassLoader().getResourceAsStream("default-req.properties");
             try {
                 configProp.load(in1);

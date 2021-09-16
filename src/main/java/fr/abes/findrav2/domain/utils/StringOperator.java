@@ -2,7 +2,6 @@ package fr.abes.findrav2.domain.utils;
 
 
 import fr.abes.findrav2.config.PropertiesLoader;
-import fr.abes.findrav2.domain.entity.ReferenceAutorite;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -31,7 +30,7 @@ public class StringOperator {
         // Init HashMap avec 9 cases et les valeurs sont null par défaut
         IntStream.range(1, 10).forEach( x -> initMap.put(x, null));
 
-        // Traitement les Prénom (firstName) et le Nom (lastName)
+        // Traitement le Prénom (firstName) et le Nom (lastName)
         List<String> fName = processName(firstName);
         List<String> lName = processName(lastName);
 
@@ -40,7 +39,7 @@ public class StringOperator {
         IntStream.range(0,lName.size()).forEach(x -> initMap.put(x+1, lName.get(x) ));
 
 
-        // Cases 5 - 9  sont pour le Prénom
+        // Cases 5 - 9 sont pour le Prénom
         if (firstName.toLowerCase().matches("^[\\p{L}]+[-][\\p{L}]+")) {
             initMap.put(5, fName.get(0) );
             initMap.put(6, fName.get(1) );
@@ -48,7 +47,7 @@ public class StringOperator {
 
         }
 
-        if (firstName.toLowerCase().matches("^[\\p{L} ]+|[\\p{L}]+")) {
+        if (firstName.toLowerCase().matches("^[\\p{L} ]{2,}|[\\p{L}]{2,}")) {
             initMap.put(5, fName.get(0) );
             initMap.put(7, fName.get(0).substring(0, 1) );
         }
@@ -59,14 +58,14 @@ public class StringOperator {
 
         }
 
-        if (firstName.toLowerCase().matches("^[\\p{L}]+[ ][a-z].|[a-z].[ ][\\p{L}]+")) {
+        if (firstName.toLowerCase().matches("^[\\p{L}]+[ ][a-z].|[a-z].[ ][\\p{L}]+|[a-z].|[a-z]")) {
             fName.stream()
-                    .filter(x -> x.matches("^[a-z]"))
+                    .filter(x -> x.matches("^[a-z].|[a-z]"))
                     .findFirst()
                     .ifPresent(x -> initMap.put(8, x.substring(0, 1)));
         }
 
-        // Print le HashMap avec le nom et le prénom dans le console
+        // Print le HashMap avec le nom et le prénom dans la console
         initMap.forEach( (k,v) -> System.out.printf("Key = %s : Value = %s%n", k,v));
         return initMap;
     }
@@ -74,12 +73,12 @@ public class StringOperator {
     public List<String> listOfSolrRequestFromPropertieFile(String fileName, String firstName, String lastName) {
 
         Map<Integer, String> mapWithName = initMapWithName(firstName, lastName);
-        // Load le fichier propertie
+        // Load le fichier properties
         PropertiesLoader propertiesLoader = new PropertiesLoader(fileName);
 
         List<String> allSolrRequest = new ArrayList<>();
 
-        // Ajouter tous les valeurs dans ce fichier propertie dans une liste pour les traitements
+        // Ajouter toutes les valeurs dans ce fichier properties dans une liste pour les traitements
 
         propertiesLoader.getConfigProp().forEach((key, value) -> {
             allSolrRequest.add(value.toString());
@@ -101,17 +100,16 @@ public class StringOperator {
                 .map(x -> "${"+x+"}")
                 .collect(Collectors.toList());
 
-        // Check tous les éléments dans la liste qu'on obtient dans le fichier propertie
-        // on prends seulement les valeurs qui ne contiennent pas les clés qui sont avec les valeurs null dans le HashMap mapWithName
-        // Ensuite, on injecte les noms et les prénoms dans chaque élément ( String ) de la liste avec les memes numéros de la clé dans initMap
+        // Check tous les éléments dans la liste que l'on obtient dans le fichier properties
+        // on prend seulement les valeurs qui ne contiennent pas les clés qui sont avec les valeurs null dans le HashMap mapWithName
+        // Ensuite, on injecte les noms et les prénoms dans chaque élément (String) de la liste avec les memes numéros de la clé dans initMap
+
         return allSolrRequest.stream()
                 .filter(v -> requestNumbersNotMatch.stream().noneMatch(v::contains))
                 .map(x -> mapWithNameNotNull.entrySet()
                         .stream()
                         .reduce(x,(s, e) -> s.replace( e.getKey(), e.getValue() ),(s1, s2) ->  null))
                 .collect(Collectors.toList());
-
-
 
     }
 

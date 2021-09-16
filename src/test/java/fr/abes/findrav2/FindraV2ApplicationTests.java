@@ -69,12 +69,12 @@ class FindraV2ApplicationTests {
          * If (Jean)
          * - 5=Jean
          * - 7=J
-         * If (Delarue J.)
-         * - 8=J
          * If (J.-L.)
          * - 8=J
          * - 9=L
          * If (J. Luc)
+         * If (J.)
+         * If (Delarue J.)
          * - 8=J
          */
         /*Predicate<String> filterNameCase5And6And7 = e -> e.matches("^[a-z]+\\-[a-z]+.$");
