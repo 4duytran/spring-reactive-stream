@@ -10,8 +10,8 @@ logging:
     root: INFO
     fr:
       abes: DEBUG
-    reactor:
-      netty: debug
+    #reactor:
+      #netty: debug
   config: classpath:@log4j2.config@
 
 solr:

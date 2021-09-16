@@ -34,7 +34,6 @@ public class ReferenceContextuelHandler {
         String lastName = serverRequest.queryParam("nom").isPresent() ? serverRequest.queryParam("nom")
                 .get() : "";
 
-
         return ( Strings.isNullOrEmpty(firstName) || Strings.isNullOrEmpty(lastName) )
                 ? ServerResponse.badRequest().build()
                 : ServerResponse.ok()

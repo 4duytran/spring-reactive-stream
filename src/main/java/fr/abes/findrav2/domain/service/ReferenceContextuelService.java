@@ -136,7 +136,7 @@ public class ReferenceContextuelService {
                     return referenceAutoriteGetDto;
                 })
                 .last()
-                .doOnError(e -> log.warn( "Name not found or failed to parsing JSON" ))
+                .doOnError(e -> log.warn( "Name not found or failed to parsing XML from SUDOC Server" ))
                 .onErrorResume(x -> Mono.just(new ReferenceAutoriteGetDto(0, new ArrayList<>())));
     }
 
@@ -153,6 +153,7 @@ public class ReferenceContextuelService {
             .doOnError(v -> log.error("ERROR => {}", v.getMessage()))
             .onErrorResume(v -> Mono.empty())
             .flatMapIterable(XmlRootRecord::getDatafieldList)
+            .parallel().runOn(Schedulers.boundedElastic())
             .filter(v -> v.getTag().startsWith("70"))
             .doOnEach(v -> counter.getAndIncrement())
             .filter(v -> v.getSubfieldList()
@@ -160,7 +161,8 @@ public class ReferenceContextuelService {
                     .noneMatch(t -> t.getCode().equals("3"))
             )
             .map(v -> {
-                /*System.out.println("TAG = " + v.getTag());
+                /*log.info("Execute by Thread : " + Thread.currentThread().getName());
+                System.out.println("TAG = " + v.getTag());
                 System.out.println("PPN = " + ppn);
                 System.out.println("POS = " + counter.get());*/
                 ReferenceAutoriteDto referenceAutoriteDto = new ReferenceAutoriteDto();
@@ -175,9 +177,10 @@ public class ReferenceContextuelService {
                         }
                     }
                 );
-                //System.out.println("==================================");
+                System.out.println("==================================");
                 return referenceAutoriteDto;
             })
+            .sequential()
             .onErrorResume(v -> Flux.just(new ReferenceAutoriteDto()));
     }
 
